@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tedu.straw.api.question.mapper.AnswerMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.tedu.straw.commons.model.Answer">
+        <id column="id" property="id" />
+        <result column="content" property="content" />
+        <result column="user_id" property="userId" />
+        <result column="user_nick_name" property="userNickName" />
+        <result column="question_id" property="questionId" />
+        <result column="is_accepted" property="isAccepted" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <resultMap id="AnswerListItemMap" type="cn.tedu.straw.commons.vo.AnswerListItemVO">
+        <id column="id" property="id" />
+        <result column="content" property="content" />
+        <result column="user_id" property="userId" />
+        <result column="user_nick_name" property="userNickName" />
+        <result column="is_accepted" property="isAccepted" />
+        <result column="gmt_create" property="gmtCreate" />
+        <!-- 查询结果中的1对多关系需要用collection节点来配置-->
+        <collection property="comments" ofType="cn.tedu.straw.commons.vo.CommentListItemVO">
+            <id column="commentId" property="id" />
+            <id column="commentContent" property="content" />
+            <id column="commentUserId" property="userId" />
+            <id column="commentUserNickName" property="userNickName" />
+            <id column="commentGmtCreate" property="gmtCreate" />
+        </collection>
+    </resultMap>
+    <select id="findByQuestionId" resultMap="AnswerListItemMap">
+        SELECT
+            answer.id,answer.content,answer.user_id,answer.user_nick_name,
+            answer.is_accepted,answer.gmt_create,
+            comment.id AS commentId,
+            comment.content AS commentContent,
+            comment.user_id AS commentUserId,
+            comment.user_nick_name AS commentUserNickName,
+            comment.gmt_create AS commentGmtCreate
+        FROM
+            answer
+        LEFT JOIN
+            comment
+        ON
+            answer.id = comment.answer_id
+        WHERE
+            question_id=#{questionId}
+        ORDER BY
+            answer.gmt_create DESC,
+            comment.gmt_create DESC
+    </select>
+</mapper>

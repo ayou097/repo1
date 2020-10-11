@@ -1,0 +1,30 @@
+GET http://localhost:9200
+
+### 测试访问8080端口
+GET http://localhost:8080
+
+### 创建索引,索引名为index01
+PUT http://localhost:9200/index01
+
+### 查看所有索引(固定格式)
+### _cat = category
+### indices = index的复数
+GET http://localhost:9200/_cat/indices?v
+
+### 删除索引,索引名为index01
+DELETE http://localhost:9200/index01
+
+### 查看索引详情,索引名为index01
+GET http://localhost:9200/index01
+
+### 使用ik_smart 分词器进行分词
+POST http://localhost:9200/_analyzer
+content_Type:application/json
+
+{
+    "analyzer":"ik_smart",
+    "text":"你一天天的就知道打游戏,能不能好好学习"
+}
+
+###
+GET http://localhost:9200/index01/_doc/1
